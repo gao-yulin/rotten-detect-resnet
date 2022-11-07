@@ -10,3 +10,4 @@ pip3 install --pre torch torchvision torchaudio --extra-index-url https://downlo
 # Or install pytorch without MPS acceleration
 conda install pytorch torchvision torchaudio -c pytorch
 ```
+
