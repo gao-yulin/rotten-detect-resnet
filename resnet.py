@@ -10,12 +10,6 @@ from binary_resnet import binaryResnet50
 
 model = binaryResnet50()
 
-child_counter = 0
-"""for child in model.children():
-   print(" child", child_counter, "is:")
-   print(child)
-   child_counter += 1"""
-
 preprocess = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
@@ -28,12 +22,12 @@ validation_split = .2
 shuffle_dataset = True
 random_seed = 42
 
-dataset = SingleRotten(preprocess=preprocess)
+dataset = SingleRotten(category="Apple", preprocess=preprocess)
 
 dataset_size = len(dataset)
 indices = list(range(dataset_size))
 split = int(np.floor(validation_split * dataset_size))
-if shuffle_dataset :
+if shuffle_dataset:
     np.random.seed(random_seed)
     np.random.shuffle(indices)
 train_indices, val_indices = indices[split:], indices[:split]
@@ -55,7 +49,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 
-for epoch in range(8):  # loop over the dataset multiple times
+for epoch in range(1):  # loop over the dataset multiple times
 
     running_loss = 0.0
     for i, data in enumerate(train_loader):
@@ -79,9 +73,7 @@ for epoch in range(8):  # loop over the dataset multiple times
 
 print('Finished Training')
 
-
-
-categories = ["Fresh Apple", "Rotten Apple"]
+categories = ["Fresh Banana", "Rotten Banana"]
 
 correct_preds = 0
 model.eval()
