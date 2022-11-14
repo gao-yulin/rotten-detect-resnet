@@ -7,7 +7,7 @@ import os.path as osp
 
 class SingleRotten(Dataset):
     def __init__(self, root='datasets', kind="Fruits", category="Apple", preprocess=None):
-        image_dir = osp.join(root, kind)
+        image_dir = osp.join(osp.join(root, "FruitVege"), kind)
         fresh_food_dir = osp.join(image_dir, "Fresh" + category)
         rotten_food_dir = osp.join(image_dir, "Rotten" + category)
         fresh_images = self.process_dir(fresh_food_dir)

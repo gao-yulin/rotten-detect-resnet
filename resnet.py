@@ -6,9 +6,17 @@ from torchvision import transforms
 import torch.optim as optim
 import torch.nn as nn
 from data.single_rotten import SingleRotten
-from binary_resnet import binaryResnet50
+from data.all_fruit import AllFruit
+from resnet_model import Resnet50
 
-model = binaryResnet50()
+
+batch_size = 10
+validation_split = .3
+shuffle_dataset = True
+random_seed = 42
+num_cls = 6
+
+model = Resnet50(cls=num_cls)
 
 preprocess = transforms.Compose([
             transforms.Resize(256),
@@ -17,12 +25,8 @@ preprocess = transforms.Compose([
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
 
-batch_size = 4
-validation_split = .2
-shuffle_dataset = True
-random_seed = 42
-
-dataset = SingleRotten(category="Apple", preprocess=preprocess)
+# dataset = SingleRotten(category="Apple", preprocess=preprocess)
+dataset = AllFruit(preprocess=preprocess)
 
 dataset_size = len(dataset)
 indices = list(range(dataset_size))
@@ -46,10 +50,10 @@ device = torch.device('mps' if torch.has_mps else 'cpu')
 model.to(device)
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9)
 
 
-for epoch in range(1):  # loop over the dataset multiple times
+for epoch in range(6):  # loop over the dataset multiple times
 
     running_loss = 0.0
     for i, data in enumerate(train_loader):
@@ -67,8 +71,8 @@ for epoch in range(1):  # loop over the dataset multiple times
 
         # print statistics
         running_loss += loss.item()
-        if i % 50 == 49:    # print every 2000 mini-batches
-            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
+        if i % 30 == 29:
+            print(f'[epoch {epoch + 1}, batch {i + 1:3d}] loss: {running_loss / 30:.3f}')
             running_loss = 0.0
 
 print('Finished Training')
@@ -81,11 +85,11 @@ with torch.no_grad():
     for i, data in enumerate(validation_loader):
         inputs, labels = data
         inputs, labels = inputs.to(device), labels.to(device)
-        print("Number of batch ", i, ':')
+        if i % 10 == 9:
+            print("Number of batch ", i+1, ':')
         outputs = model(inputs)
         # probabilities = torch.nn.functional.softmax(output[0], dim=0)
         _, preds = torch.max(outputs, 1)
-        print([categories[index] for index in preds])
         for pred, label in zip(preds, labels):
             if pred == label:
                 correct_preds += 1
