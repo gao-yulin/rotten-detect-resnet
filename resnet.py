@@ -25,8 +25,19 @@ preprocess = transforms.Compose([
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
 
+"""preprocess = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.RandomHorizontalFlip(p=0.5),  # 0.5
+            transforms.RandomVerticalFlip(p=0.5),  # 0.5
+            transforms.RandomRotation([-90, 90]),
+            transforms.ToTensor(),
+            transforms.RandomErasing(p = 0.8, scale=(0.02, 0.33)),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+"""
 # dataset = SingleRotten(category="Apple", preprocess=preprocess)
-dataset = AllFruit(preprocess=preprocess)
+dataset = AllFruit(preprocess=preprocess, mode="train")
 
 dataset_size = len(dataset)
 indices = list(range(dataset_size))
@@ -77,7 +88,8 @@ for epoch in range(6):  # loop over the dataset multiple times
 
 print('Finished Training')
 
-categories = ["Fresh Banana", "Rotten Banana"]
+torch.save(model.state_dict(), "./model.pth")
+
 
 correct_preds = 0
 model.eval()
