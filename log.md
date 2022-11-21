@@ -13,7 +13,7 @@ varying epoch size:
 - Inference without training: 18.1%
 - Inference after training 1 epoch: 90.9%
 - Inference after training 3 epoch: 95.4%
-- Inference after training 6 epoch: 98.2%
+- Inference after training 6 epoch: 98.6%
 
 Varying mini-batch size:
 - batch size 5: 98.8%
