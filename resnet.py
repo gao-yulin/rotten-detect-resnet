@@ -7,25 +7,26 @@ import torch.optim as optim
 import torch.nn as nn
 from data.single_rotten import SingleRotten
 from data.all_fruit import AllFruit
+from data.all_fruit_vege import AllFruitVege
 from resnet_model import Resnet50
 
 
 batch_size = 10
 validation_split = .3
 shuffle_dataset = True
-random_seed = 42
-num_cls = 6
+random_seed = 19
+num_cls = 2
 
 model = Resnet50(cls=num_cls)
 
-preprocess = transforms.Compose([
+"""preprocess = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ])
+        ])"""
 
-"""preprocess = transforms.Compose([
+preprocess = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.RandomHorizontalFlip(p=0.5),  # 0.5
@@ -35,9 +36,10 @@ preprocess = transforms.Compose([
             transforms.RandomErasing(p = 0.8, scale=(0.02, 0.33)),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
-"""
-# dataset = SingleRotten(category="Apple", preprocess=preprocess)
-dataset = AllFruit(preprocess=preprocess, mode="train")
+
+# dataset = SingleRotten(kind="Vegetables", category="Tomato", preprocess=preprocess)
+# dataset = AllFruit(preprocess=preprocess, mode="train", binary=True)
+dataset = AllFruitVege(preprocess=preprocess, binary=True)
 
 dataset_size = len(dataset)
 indices = list(range(dataset_size))
@@ -52,9 +54,9 @@ train_sampler = SubsetRandomSampler(train_indices)
 valid_sampler = SubsetRandomSampler(val_indices)
 
 train_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
-                                           sampler=train_sampler)
+                                           sampler=train_sampler, drop_last=True)
 validation_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
-                                                sampler=valid_sampler)
+                                                sampler=valid_sampler, drop_last=True)
 
 # move the input and model to GPU for speed if available
 device = torch.device('mps' if torch.has_mps else 'cpu')

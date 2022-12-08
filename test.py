@@ -7,12 +7,13 @@ import torch.optim as optim
 import torch.nn as nn
 from data.single_rotten import SingleRotten
 from data.all_fruit import AllFruit
+from data.all_fruit_vege import AllFruitVege
 from resnet_model import Resnet50
 
 
 batch_size = 10
 random_seed = 42
-num_cls = 6
+num_cls = 2
 
 model = Resnet50(cls=num_cls)
 model.load_state_dict(torch.load("./model.pth"))
@@ -25,7 +26,8 @@ preprocess = transforms.Compose([
         ])
 
 # dataset = SingleRotten(category="Apple", preprocess=preprocess)
-dataset = AllFruit(preprocess=preprocess, mode="test")
+dataset = AllFruit(preprocess=preprocess, mode="test", binary=True)
+# dataset = AllFruitVege(preprocess=preprocess, binary=True)
 
 dataset_size = len(dataset)
 
